@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import type { AnalysisResult } from '../types/analysis';
+
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -10,7 +12,7 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
 
   //Temp variables just to see if it'll actually work it'll store backend results + error
-  const [analysisResult, setAnalysisResult] = useState<any | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -79,7 +81,7 @@ export default function Home() {
         throw new Error(`Backend error ${response.status}: ${text || response.statusText}`);
       }
 
-      const data = await response.json();
+      const data: AnalysisResult = await response.json();
       console.log('Analysis results:', data);
       setAnalysisResult(data);
     } catch (error: any) {
