@@ -206,7 +206,7 @@ export default function Home() {
                   value={significantColumns}
                   onChange={(e) => setSignificantColumns(e.target.value)}
                   placeholder="e.g., A, B, C or 1, 2, 3"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-gray-900 placeholder-gray-500"
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   Comma-separated column names or indices to prioritize
@@ -227,7 +227,7 @@ export default function Home() {
                   value={significantRows}
                   onChange={(e) => setSignificantRows(e.target.value)}
                   placeholder="e.g., 1, 5, 10-20"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-gray-900 placeholder-gray-500"
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   Row numbers or ranges to analyze closely
