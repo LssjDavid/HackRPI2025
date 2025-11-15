@@ -9,6 +9,10 @@ export default function Home() {
   const [significantRows, setSignificantRows] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
+  //Temp variables just to see if it'll actually work it'll store backend results + error
+  const [analysisResult, setAnalysisResult] = useState<any | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -42,34 +46,46 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!file) {
       alert('Please select a CSV file');
       return;
     }
 
-    setIsUploading(true);
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+    if (!backendUrl) {
+      alert('Backend URL is not configured (NEXT_PUBLIC_BACKEND_URL)');
+      return;
+    }
 
-    // Prepare form data for backend
+    setIsUploading(true);
+    setErrorMessage(null);
+    setAnalysisResult(null);
+
     const formData = new FormData();
     formData.append('file', file);
+    // these are optional for future use; backend will just ignore them for now
     formData.append('significantColumns', significantColumns);
     formData.append('significantRows', significantRows);
 
     try {
-      // Backend integration will go here
-      const response = await fetch('http://localhost:8000/analyze', {
+      const response = await fetch(`${backendUrl}/api/analyze`, {
         method: 'POST',
         body: formData,
       });
-      
+
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        throw new Error(`Backend error ${response.status}: ${text || response.statusText}`);
+      }
+
       const data = await response.json();
       console.log('Analysis results:', data);
-      
-      // Handle response here
-    } catch (error) {
+      setAnalysisResult(data);
+    } catch (error: any) {
       console.error('Upload error:', error);
-      alert('Failed to upload file');
+      setErrorMessage(error?.message ?? 'Failed to upload or analyze file');
+      alert('Failed to upload or analyze file');
     } finally {
       setIsUploading(false);
     }
@@ -269,6 +285,23 @@ export default function Home() {
                 )}
               </button>
             </form>
+            {/* Debug output (temporary) */}
+            {errorMessage && (
+              <div className="mt-4 text-sm text-red-600">
+                {errorMessage}
+              </div>
+            )}
+
+            {analysisResult && (
+              <div className="mt-6">
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                  Raw analysis result (debug)
+                </h2>
+                <pre className="text-xs bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto max-h-64">
+                  {JSON.stringify(analysisResult, null, 2)}
+                </pre>
+              </div>
+            )}
           </div>
         </div>
       </div>
