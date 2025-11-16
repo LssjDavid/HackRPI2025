@@ -293,17 +293,148 @@ export default function Home() {
                 {errorMessage}
               </div>
             )}
-
             {analysisResult && (
-              <div className="mt-6">
-                <h2 className="text-sm font-semibold text-gray-700 mb-2">
+            <div className="mt-8 space-y-6">
+              {/* High-level summary cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-indigo-50 rounded-lg p-4">
+                  <p className="text-xs font-medium text-indigo-700 uppercase tracking-wide">
+                    Rows
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold text-indigo-900">
+                    {analysisResult.row_count}
+                  </p>
+                </div>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <p className="text-xs font-medium text-blue-700 uppercase tracking-wide">
+                    Columns
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold text-blue-900">
+                    {analysisResult.column_count}
+                  </p>
+                </div>
+                <div className="bg-emerald-50 rounded-lg p-4">
+                  <p className="text-xs font-medium text-emerald-700 uppercase tracking-wide">
+                    Features detected
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold text-emerald-900">
+                    {analysisResult.columns.length}
+                  </p>
+                </div>
+              </div>
+
+              {/* Columns overview table */}
+              <div>
+                <h2 className="text-sm font-semibold text-gray-800 mb-2">
+                  Column overview
+                </h2>
+                <div className="overflow-x-auto rounded-lg border border-gray-200">
+                  <table className="min-w-full text-sm">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">
+                          Name
+                        </th>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">
+                          Type
+                        </th>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">
+                          % Missing
+                        </th>
+                        <th className="px-4 py-2 text-left font-medium text-gray-600">
+                          Unique values
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {analysisResult.columns.map((col) => (
+                        <tr
+                          key={col.name}
+                          className="border-t border-gray-100"
+                        >
+                          <td className="px-4 py-2 font-medium text-gray-900">
+                            {col.name}
+                          </td>
+                          <td className="px-4 py-2 text-gray-700">
+                            {col.type}
+                          </td>
+                          <td className="px-4 py-2 text-gray-700">
+                            {col.missing_pct.toFixed(1)}%
+                          </td>
+                          <td className="px-4 py-2 text-gray-700">
+                            {col.n_unique}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* LLM / narrative summary */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h2 className="text-sm font-semibold text-gray-800 mb-2">
+                  AI summary
+                </h2>
+
+                {/* Main narrative */}
+                <p className="text-sm text-gray-800 whitespace-pre-line">
+                  {analysisResult.llm.dataset_summary}
+                </p>
+
+                {/* Key findings */}
+                {analysisResult.llm.key_findings?.length > 0 && (
+                  <div className="mt-3">
+                    <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">
+                      Key findings
+                    </h3>
+                    <ul className="list-disc list-inside text-sm text-gray-800 space-y-1">
+                      {analysisResult.llm.key_findings.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Data quality issues */}
+                {analysisResult.llm.data_quality_issues?.length > 0 && (
+                  <div className="mt-3">
+                    <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">
+                      Data quality issues
+                    </h3>
+                    <ul className="list-disc list-inside text-sm text-gray-800 space-y-1">
+                      {analysisResult.llm.data_quality_issues.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Next questions */}
+                {analysisResult.llm.next_questions?.length > 0 && (
+                  <div className="mt-3">
+                    <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">
+                      Next questions to explore
+                    </h3>
+                    <ul className="list-disc list-inside text-sm text-gray-800 space-y-1">
+                      {analysisResult.llm.next_questions.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              {/* Optional: keep raw JSON for debugging */}
+              <div>
+                <h2 className="text-xs font-semibold text-gray-500 mb-1">
                   Raw analysis result (debug)
                 </h2>
                 <pre className="text-xs bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto max-h-64">
                   {JSON.stringify(analysisResult, null, 2)}
                 </pre>
               </div>
-            )}
+            </div>
+          )}
           </div>
         </div>
       </div>

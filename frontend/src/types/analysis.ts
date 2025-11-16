@@ -1,4 +1,6 @@
-export interface ColumnInfo {
+// frontend/src/types/analysis.ts
+
+export interface ColumnSummary {
   name: string;
   type: string;
   missing_pct: number;
@@ -7,15 +9,21 @@ export interface ColumnInfo {
 
 export interface ChartSpec {
   column: string;
-  type: string;
-  data: number[];
+  kind: 'hist' | 'bar';
+}
+
+export interface LLMInsights {
+  dataset_summary: string;
+  key_findings: string[];
+  data_quality_issues: string[];
+  next_questions: string[];
 }
 
 export interface AnalysisResult {
   row_count: number;
   column_count: number;
-  columns: ColumnInfo[];
+  columns: ColumnSummary[];
   charts: ChartSpec[];
-  anomalies: Record<string, any>;
-  llm: string;
+  anomalies: string[];
+  llm: LLMInsights;          // ⬅️ now an object, not a string
 }
